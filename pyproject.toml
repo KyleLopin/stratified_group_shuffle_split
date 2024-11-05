@@ -1,5 +1,6 @@
 [project]
 name = "stratified_group_shuffle_split"
+dynamic = ["version"]
 description = "Use perform group shuffle split and stratification on a regression dataset"
 authors = [{ name = "Kyle Vitautas Lopin", email = "KyleLopin@gmail.com" }]
 license = {text = "MIT"}          # License identifier, e.g., MIT
