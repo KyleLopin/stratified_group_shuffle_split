@@ -100,20 +100,28 @@ class StratifiedGroupShuffleSplit(BaseCrossValidator):
         # Map each group to its bin
         group_bin_map = dict(zip(group_means.index, group_means_binned))
 
-        # Add a 'y_binned' column to the data based on group mean binning
+        # Add a 'y_binned' column to the data based on group mean
+        # binning to stratify groups by their mean.
         data['y_binned'] = data['group'].map(group_bin_map)
 
+        # Initialize a random number generator with the specified random state for reproducibility
         rng = np.random.default_rng(self.random_state)
 
+        # Generate the specified number of train-test splits
         for _ in range(self.n_splits):
+            # Initialize sets for unique train and test groups
             train_groups, test_groups = set(), set()
 
             # Stratify based on binned group means
             for bin_value in data['y_binned'].unique():
+                # Get unique groups within the current bin
                 bin_groups = data[data['y_binned'] == bin_value]['group'].unique()
+                # Shuffle groups within the bin to randomize selection
                 rng.shuffle(bin_groups)
 
+                # Calculate the number of groups to assign to the test set based on `test_size`
                 n_test = int(len(bin_groups) * self.test_size)
+                # Assign a subset to test_groups and the rest to train_groups
                 test_groups.update(bin_groups[:n_test])
                 train_groups.update(bin_groups[n_test:])
 
@@ -121,9 +129,10 @@ class StratifiedGroupShuffleSplit(BaseCrossValidator):
             test_groups -= train_groups
 
             # Convert groups to Boolean indices for train/test splits
-            train_idx = data['group'].isin(train_groups).values
+            train_idx = data['group'].isin(train_groups).values  # True if group is in train_groups
             test_idx = data['group'].isin(test_groups).values
 
+            # Yield the indices of train and test samples as arrays of indices
             yield np.where(train_idx)[0], np.where(test_idx)[0]
 
     def get_n_splits(self, X=None, y=None, groups=None):
