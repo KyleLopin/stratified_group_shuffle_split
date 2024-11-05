@@ -1,0 +1,22 @@
+[project]
+name = "stratified_group_shuffle_split"
+description = "Use perform group shuffle split and stratification on a regression dataset"
+authors = [{ name = "Kyle Vitautas Lopin", email = "KyleLopin@gmail.com" }]
+license = {text = "MIT"}          # License identifier, e.g., MIT
+dependencies = [
+    "numpy >= 1.21",
+    "pandas >= 1.3"
+]
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["stratified_group_shuffle_split*"]
+exclude = ["test*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "stratified_group_shuffle_split.__version__"}
+
