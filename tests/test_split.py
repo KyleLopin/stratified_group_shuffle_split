@@ -88,6 +88,65 @@ class TestExceptions(unittest.TestCase):
             StratifiedGroupShuffleSplit(test_size=1.5)
 
 
+class TestDistribution(unittest.TestCase):
+    def setUp(self):
+        """Set up the test data and StratifiedGroupShuffleSplit instance."""
+        # Generate data
+        self.x = np.arange(300)  # Feature values [0, 1, 2, ..., 299]
+        self.y = np.repeat(np.arange(100), 3)  # Target values [0, 0, 0, 1, 1, 1, ..., 99, 99, 99]
+        self.groups = np.repeat(np.arange(100), 3)  # Group labels [0, 0, 0, 1, 1, 1, ..., 99, 99, 99]
+        self.n_bins = 10
+        # Initialize StratifiedGroupShuffleSplit with specified parameters
+        self.spl = StratifiedGroupShuffleSplit(n_splits=20, test_size=0.1,
+                                               n_bins=self.n_bins, random_state=42)
+
+    def test_group_distribution_in_test_set(self):
+        """Test that each split contains one group in each of the specified bins."""
+        for train_idx, test_idx in self.spl.split(self.x, self.y, self.groups):
+            # Initialize dictionaries for tracking bin counts for each category in train and test sets
+            bins = {name: [0] * self.n_bins for name in
+                    ['group_test', 'group_train', 'y_test', 'y_train', 'x_test', 'x_train',
+                     'unique_group_test', 'unique_group_train']}
+
+            # test each stratified text bin has just 1 group
+            # calculate unique groups present in the test set for each split
+            for test_group in np.unique(self.groups[test_idx]):
+                # Determine the bin index (each bin represents a range of 10)
+                bin_index = test_group // 10
+                # Increment the count for the respective bin
+                bins['unique_group_test'][bin_index] += 1
+            for train_group in np.unique(self.groups[train_idx]):
+                bins['unique_group_train'][train_group // 10] += 1
+
+            # Loop over test indices and update bins for y_test, group_test, and x_test
+            for test_idx_value in test_idx:
+                # Determine the bin index for each category based on the y value
+                bin_index = self.y[test_idx_value] // 10  # Determine bin index based on `y` value
+
+                # Increment the bin count for y_test, group_test, and x_test
+                bins['y_test'][bin_index] += 1
+                bins['group_test'][self.groups[test_idx_value] // 10] += 1
+                bins['x_test'][self.x[test_idx_value] // 30] += 1
+            for train_idx_value in train_idx:
+                # Increment the bin count for y_train, group_train, and x_train
+                bins['y_train'][self.y[train_idx_value] // 10] += 1
+                bins['group_train'][self.groups[train_idx_value] // 10] += 1
+                bins['x_train'][self.x[train_idx_value] // 30] += 1
+            expected_bins = {
+                'group_test': [3] * 10,
+                'group_train': [27] * 10,
+                'y_test': [3] * 10,
+                'y_train': [27] * 10,
+                'x_test': [3] * 10,
+                'x_train': [27] * 10,
+                'unique_group_test': [1] * 10,
+                'unique_group_train': [9] * 10
+            }
+            for key, expected_values in expected_bins.items():
+                self.assertEqual(bins[key], expected_values,
+                                 f"{key} counts do not match expected values")
+
+
 if __name__ == "__main__":
     unittest.main()
 
