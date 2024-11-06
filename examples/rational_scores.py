@@ -67,7 +67,7 @@ def plot_comparison_scores(shuffle_scores, stratified_scores):
     stds = [shuffle_scores[1], stratified_scores[1], shuffle_scores[3], stratified_scores[3]]
 
     # Create bar chart
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(5, 3))
     ax.bar(labels, means, yerr=stds, capsize=10, color=['blue', 'blue', 'red', 'red'], alpha=0.6)
     ax.set_ylabel("R² Score")
     ax.set_title("R² Score Comparison")
