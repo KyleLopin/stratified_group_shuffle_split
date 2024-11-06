@@ -46,12 +46,12 @@ def find_split_results(x, y, splitter, title_prefix, groups=None):
 
     # Plot largest mean difference
     plot_split_results(max_diff_x[0], max_diff_x[1], max_diff_data[0], max_diff_data[1],
-                       f"{title_prefix}: Largest Mean Difference (Diff = {max_diff:.2f})")
+                       f"{title_prefix}:\nLargest Mean Difference (Diff = {max_diff:.2f})")
 
 
 def plot_split_results(x_train, x_test, y_train, y_test, title):
     # Create a single figure with 2 rows and 1 column
-    fig, axes = plt.subplots(2, 1, figsize=(6, 10))
+    fig, axes = plt.subplots(2, 1, figsize=(5, 8))
 
     # Plot y vs x scatter plots for the mean difference
     axes[0].scatter(y_train, x_train, color="blue", alpha=0.6, label="Train")
