@@ -41,20 +41,25 @@ def visualize_split_distributions(x: pd.DataFrame,
         Displays the matplotlib plots directly.
     """
     # Perform stratified split internally
-    sgss = StratifiedGroupShuffleSplit(n_splits=1, n_bins=n_bins, train_size=0.8, random_state=42)
+    sgss = StratifiedGroupShuffleSplit(n_splits=1, n_bins=n_bins,
+                                       train_size=0.8, random_state=42)
     train_idx, test_idx = next(sgss.split(x=x, y=y, groups=y))
 
     y_train = y[train_idx]
     y_test = y[test_idx]
 
-    fig, axs = plt.subplots(2, 1, figsize=(10, 8), gridspec_kw={'height_ratios': [3, 1]})
+    fig, axs = plt.subplots(2, 1, figsize=(10, 8),
+                            gridspec_kw={'height_ratios': [3, 1]})
 
+    # Compute common bin edges for consistent histogram comparison
+    bin_edges = np.histogram_bin_edges(y, bins=n_bins)
+    print(bin_edges)
     # Top plot: Histogram with KDE
-    sns.histplot(y, bins=n_bins, kde=True, color='black', label='Full', ax=axs[0], stat="density",
+    sns.histplot(y, bins=bin_edges, kde=True, color='black', label='Full', ax=axs[0], stat="density",
                  element="step")
-    sns.histplot(y_train, bins=n_bins, kde=True, color='blue', label='Train', ax=axs[0],
+    sns.histplot(y_train, bins=bin_edges, kde=True, color='blue', label='Train', ax=axs[0],
                  stat="density", element="step")
-    sns.histplot(y_test, bins=n_bins, kde=True, color='red', label='Test', ax=axs[0],
+    sns.histplot(y_test, bins=bin_edges, kde=True, color='red', label='Test', ax=axs[0],
                  stat="density", element="step")
 
     axs[0].legend()
