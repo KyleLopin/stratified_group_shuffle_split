@@ -19,6 +19,7 @@ from stratified_group_shuffle_split.split import StratifiedGroupShuffleSplit
 def visualize_split_distributions(x: pd.DataFrame,
                                   y: pd.Series,
                                   n_bins: int,
+                                  test_size: float = 0.2,
                                   title: str = None) -> None:
     """
     Perform a stratified group shuffle split on the target variable and visualize
@@ -32,6 +33,8 @@ def visualize_split_distributions(x: pd.DataFrame,
         Target values. Used both for stratification and grouping.
     n_bins : int
         Number of bins to stratify the target variable.
+    test_size : float, optional (default=0.2)
+        Proportion of the dataset to include in the test split.
     title : str, optional
         Title for the histogram and CDF plots.
 
@@ -47,13 +50,13 @@ def visualize_split_distributions(x: pd.DataFrame,
 
     y_train = y[train_idx]
     y_test = y[test_idx]
+    print(y_test)
 
     fig, axs = plt.subplots(2, 1, figsize=(10, 8),
                             gridspec_kw={'height_ratios': [3, 1]})
 
     # Compute common bin edges for consistent histogram comparison
     bin_edges = np.histogram_bin_edges(y, bins=n_bins)
-    print(bin_edges)
     # Top plot: Histogram with KDE
     sns.histplot(y, bins=bin_edges, kde=True, color='black', label='Full', ax=axs[0], stat="density",
                  element="step")
@@ -92,4 +95,4 @@ if __name__ == '__main__':
         'x': x_,
         'y': y_
     })
-    visualize_split_distributions(df[['x']], df['y'] , 10)
+    visualize_split_distributions(df[['x']], df['y'], 7, test_size=0.13)

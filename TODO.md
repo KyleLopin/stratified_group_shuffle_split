@@ -4,6 +4,7 @@ This document outlines features, improvements, and research directions for the p
 Contributions and feedback are welcome.
 
 ## Current features to add
+- Support irregular groups sizes
 - Support **stratified-only splitting** without requiring `groups`
 - Option to **return bin labels** (for analysis or reproducibility)
 - Implement **StratifiedKFold** and **StratifiedGroupKFold** for cross-validation workflows
